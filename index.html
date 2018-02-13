@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+        .fader {
+            opacity: 0.4;
+        }
+
+        .background {
+            position: absolute;
+            z-index: -1;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+            width: 100%;
+        }
+
+        .storesign {
+            position: absolute;
+            z-index: 0;
+            bottom: 2%;
+            left: 43%;
+            height: 14%;
+            width: 14%;
+        }
+    </style>
+</head>
+
+<body>
+    <img class="background" src="./RPGGAMEPICS/Wallpaperburger.JPG">
+    <img class="storesign" src="./RPGGAMEPICS/Signburger.png">
+    <div class="container">
+        <div id="characters" class="row">
+        </div>
+        <div id="gameplay" class="row">
+            <div id="myHero" class="col-md-4"></div>
+            <div id="myBattle" class="col-md-4"></div>
+            <button id= "attackBTN" class="btn btn-danger">ATTACK</button>
+
+            <div id="myEnemy" class="col-md-4"></div>
+        </div>
+    </div>
+    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            var chosenHero
+            var chosenEnemy
+            var isHeroChosen
+            var isEnemyChosen
+            var isHeroAlive
+            var isEnemyAlive
+            var charArr = [
+                {
+                    name: "Bob",
+                    hp: 100,
+                    strength: 50,
+                    image: "./RPGGAMEPICS/Bobburger.png"
+                },
+                {
+                    name: "Linda",
+                    hp: 70,
+                    strength: 55,
+                    image: "./RPGGAMEPICS/Lindaburger.png"
+                },
+                {
+                    name: "Tina",
+                    hp: 60,
+                    strength: 50,
+                    image: "./RPGGAMEPICS/Tinaburger.png"
+                },
+                {
+                    name: "Jairo",
+                    hp: 120,
+                    strength: 20,
+                    image: "./RPGGAMEPICS/JairoBurger.png"
+                },
+                {
+                    name: "Gene",
+                    hp: 60,
+                    strength: 60,
+                    image: "./RPGGAMEPICS/Geneburger.png"
+                },
+                {
+                    name: "Louise",
+                    hp: 70,
+                    strength: 50,
+                    image: "./RPGGAMEPICS/Louiseburger.png"
+                }
+            ]
+
+            function initGame() {
+                isHeroChosen = false
+                isEnemyChosen = false
+
+                for (var i = 0; i < charArr.length; i++) {
+                    var num = Math.floor(12 / charArr.length)
+                    var charThing = $("<div class ='myChar col-md-" + num + "' value='" + i + "'><img src ='" + charArr[i].image + "' style='width:150px;height:150px;'/></div>")
+                    $("#characters").append(charThing)
+                }
+            }
+            //Gets to choose player
+            $(document).on("click", ".myChar", function () {
+                if (isHeroChosen === false) {
+                    chosenHero = charArr[$(this).attr("value")]
+                    console.log(chosenHero)
+                    $(this).addClass("fader")
+                    isHeroChosen = true
+                    myHeroThing = $("<div id='" + chosenHero.name
+                        + "'><img src='" + chosenHero.image + "' style='width:150px;height:150px;'/><p>"
+                        + chosenHero.name + "</p><h6>HP</h6><p id='heroHP'>" + chosenHero.hp + "</p></div>")
+                    $("#myHero").html(myHeroThing)
+                }
+                else if (isEnemyChosen === false && chosenHero.name != charArr[$(this).attr("value")].name) {
+                    chosenEnemy = charArr[$(this).attr("value")]
+                    console.log(chosenEnemy)
+                    $(this).addClass("fader")
+                    isEnemyChosen = true
+                    myEnemyThing = $("<div id='" + chosenEnemy.name
+                        + "'><img src='" + chosenEnemy.image + "' style='width:150px;height:150px;'/><p>"
+                        + chosenEnemy.name + "</p><h6>HP</h6><p id='EnemyHP'>" + chosenEnemy.hp + "</p></div>")
+                    $("#myEnemy").html(myEnemyThing)
+
+                }
+            })
+            //attacking
+            $("#attackBTN").on("click", function () {
+                var heroAtt = Math.floor(Math.random() * chosenHero.strength)
+                var enemyAtt = Math.floor(Math.random() * chosenEnemy.strength)
+
+                chosenEnemy.hp -= heroAtt
+                $("#enemyHP").text(chosenEnemy.hp)
+                $("#myBattle").html(chosenHero.name + " attacked" + chosenEnemy.name + " for" + heroAtt + " points </p>")
+                chosenHero.hp -= enemyAtt
+                $("#heroHP").text(chosenHero.hp)
+                $("#myBattle").append(chosenEnemy.name + " attacked" + chosenHero.name + " for" + enemyAtt + " points </p>")
+
+                if (chosenHero.hp <= 0) {
+                    $("#myBattle").html(chosenEnemy.name + " defeated you")
+                } else if (chosenEnemy.hp <= 0)
+                    $("#myBattle").html(chosenHero.name + " has defeated " + chosenEnemy.name)
+            })
+            //name, hp, strength, image
+
+            initGame()
+        });
+
+    </script>
+
+</body>
+
+</html>
